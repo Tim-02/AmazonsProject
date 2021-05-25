@@ -7,12 +7,18 @@ Coordinates are counted from right-up corner
 3 - block or arrow
 */
 
+import java.util.ArrayList;
+
 public class Board implements Cloneable {
     public static final int N = 10;
 
     private int[][] board;
+    private ArrayList<int[]> white_queens;
+    private ArrayList<int[]> black_queens;
 
     public Board(){
+        white_queens = new ArrayList<>();
+        black_queens = new ArrayList<>();
         resetBoard();
 
         //initialize the board

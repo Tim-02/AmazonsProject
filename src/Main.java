@@ -3,6 +3,7 @@ import java.util.Scanner;
 class Main {
     public static void main(String[] args){
         Board b = new Board();
+        ActionGenerator ag = new ActionGenerator();
         Action act;
         Scanner in = new Scanner(System.in);
         int player = 2; //black
@@ -10,6 +11,7 @@ class Main {
         b.printBetterBoard();
 
         while(true){
+            ag.generate(b, player);
             System.out.println("Enter your queen location:");
             int qX = in.nextInt() -1;
             int qY = in.nextInt() -1;
@@ -27,6 +29,7 @@ class Main {
             //perform the action on our board
             act.perform(b);
 
+            player = player == 2 ? 1 : 2;
             b.printBetterBoard();
         }
     }
