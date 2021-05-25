@@ -106,11 +106,11 @@ public class Board implements Cloneable {
     }
 
     public void printBetterBoard(){
-        System.out.println("  | 1 2 3 4 5 6 7 8 9 10");
+        System.out.println("  | 0 1 2 3 4 5 6 7 8 9");
         System.out.println("--+---------------------");
 
         for(int i=0; i<N; i++) {
-            System.out.printf("%d%s", i+1, (i!=9)? " | " : "| ");
+            System.out.printf("%d%s", i, " | ");
             for (int j = 0; j < N; j++) {
                 //j corresponds to x, i corresponds to y
                 System.out.print(board[j][i] + " ");

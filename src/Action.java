@@ -1,7 +1,9 @@
+import java.util.Arrays;
+
 /*
 Class that makes it possible to transition between states
 */
-public class Action {
+public class Action implements Cloneable{
     //location of picked queen given by (x,y)
     int[] queen;
     //position to put queen in given by (x,y)
@@ -31,6 +33,30 @@ public class Action {
         }
     }
 
+    public boolean setQueen(int x, int y){
+        if(isOutOfBounds(x,y))
+            return false;
+        queen[0] = x;
+        queen[1] = y;
+        return true;
+    }
+
+    public boolean setPos(int x, int y){
+        if(isOutOfBounds(x,y))
+            return false;
+        pos[0] = x;
+        pos[1] = y;
+        return true;
+    }
+
+    public boolean setArrow(int x, int y){
+        if(isOutOfBounds(x,y))
+            return false;
+        arrow[0] = x;
+        arrow[1] = y;
+        return true;
+    }
+
     public void perform(Board current){
         int qColor = current.get(queen);
         current.setTo(queen, 0);
@@ -55,4 +81,25 @@ public class Action {
         return false;
     }
 
+    public Object clone() throws CloneNotSupportedException {
+        Action a2 = (Action) super.clone();
+        a2.pos = new int[2];
+        a2.queen = new int[2];
+        a2.arrow = new int[2];
+
+        a2.queen[0] = this.queen[0];    a2.queen[1] = this.queen[1];
+        a2.pos[0] = this.pos[0];        a2.pos[1] = this.pos[1];
+        a2.arrow[0] = this.arrow[0];    a2.arrow[1] = this.arrow[1];
+
+        return a2;
+    }
+
+    @Override
+    public String toString() {
+        return "Action{" +
+                "queen=" + Arrays.toString(queen) +
+                ", pos=" + Arrays.toString(pos) +
+                ", arrow=" + Arrays.toString(arrow) +
+                '}';
+    }
 }
