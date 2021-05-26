@@ -122,7 +122,8 @@ public class Board implements Cloneable {
     //quick coordinate boundaries check
     public boolean isOutOfBounds(int x, int y){
         if(x<0 || x>=N || y<0 || y>=N) {
-            System.out.println("Coordinates out of bounds");
+            //This is called a lot so the message is commented
+            //System.out.println("Coordinates out of bounds");
             return true;
         }
         return false;
