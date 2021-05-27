@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class ActionGenerator {
     ArrayList<Action> actions;
     ArrayList<int[]> queens;
-
+    TreeGen tree = new TreeGen();
     //global variable for current queen and position to use in recursion
     private int[] current_queen = new int[2];
     private int[] current_pos = new int[2];
@@ -45,7 +45,8 @@ public class ActionGenerator {
                 }
             }
         }
-
+        //recurse for all the moves from this current move
+        tree.allMoves(current,player);
         return actions;
     }
 
