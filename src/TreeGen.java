@@ -5,52 +5,53 @@ public class TreeGen {
     ActionGenerator aGen = new ActionGenerator();
     ArrayList<Action> temp = new ArrayList();
 
-    //for the nodes
-    int value;
-    TreeGen node;
+    //keep reference to the root
+    Node root;
+    //hardcoded depth limit
     public int depth = 3;
 
     //constructors
 
-    TreeGen(){}
-
-    TreeGen(int value){
-        this.value = value;
-        node = null;
+    //if we start the tree from scratch
+    TreeGen(){
+        root = new Node();
     }
+
+    //if we start tree from a node
+    TreeGen(Node root){
+        this.root = root;
+    }
+
 
     //methods
 
-    //need position of node, depth and what player)
-    //using depth as a hard counter for now
-    public void allMoves(Board future, int player, Node parent){
-        //check for each child of the node by calling the function again
-        if (future == null){
-            new TreeGen(value);
-        }
+    //called for root node
+    public void generateTree(int player){
 
-        //if(parent == null)
-          //TO DO, fix parent node situation, make them link up correctly
+        temp = aGen.generate(root.curr, player);
 
-        temp = aGen.generate(future, player);
 
         for(Action act : temp){
-            try { Node n = new Node(act.performReturn(future));
-                parent.children.add(n);
-            }catch(Exception e){ System.out.println("Error in allMoves, cloning board");}
-
+            //create a child node by giving parent and action
+            Node n = new Node(root, act);
+            root.children.add(n);
 
         }
 
-
-        //todo:
-        // -compare current depth to max depth(currently hard coded)
-        // -recurse into next child and log it into a list
-        // -list has to be traversed by the AI
+        System.out.println("Possible moves: " + root.children.size());
 
 
-
-
-        depth --;
     }
+
+    //todo:
+    // - add the depth functionality to perform limited number of levels (only one right now)
+    // - optimize by generating nodes together with actions
+
+    public void setRoot(Node new_root){
+        if(new_root == null){
+            System.out.println("Root of the tree is set to null");
+        }
+        this.root = new_root;
+    }
+
 }

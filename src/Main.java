@@ -4,34 +4,49 @@ import java.util.Scanner;
 
 class Main {
     public static void main(String[] args) {
-        Board b = new Board();
-        ActionGenerator ag = new ActionGenerator();
         Random r = new Random();
+
+        //create a tree gen with only a root node
+        TreeGen tg = new TreeGen();
+        //local version of the board
+        Board b = new Board();
 
         int player = 2; //black
 
         b.printBetterBoard();
 
-        //changed while to for for now
         for(int i=0; i<50; i++) {
             System.out.println("PLAYER:" + player);
 
-            //generate all possible moves
-            //todo: so far, limitations:
-            // - only first queen found
-            // - no arrows yet (0,0 as default)
-            ArrayList<Action> actions = ag.generate(b, player);
+            //generate children nodes (only one depth)
+            tg.generateTree(player);
 
+            //take random node from the children and perform its action
+            Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
+            System.out.println("THEY PICKED: " + random_node.action);
+            random_node.action.perform(b);
 
-            //take random action from the list and perform it
-            Action random_act = actions.get(r.nextInt(actions.size()));
-            System.out.println("THEY PICKED: " + random_act);
-            random_act.perform(b);
+            //now chosen node is the new root node
+            tg.setRoot(random_node);
 
 
             b.printBetterBoard();
             player = player == 2 ? 1 : 2;
         }
+    }
+
+    //moved random AI to separate method
+    public static void randomMove(Board b, int player){
+        ActionGenerator ag = new ActionGenerator();
+        Random r = new Random();
+
+        //generate all possible moves
+        ArrayList<Action> actions = ag.generate(b, player);
+
+        //take random action from the list and perform it
+        Action random_act = actions.get(r.nextInt(actions.size()));
+        System.out.println("THEY PICKED: " + random_act);
+        random_act.perform(b);
     }
 
     // i put user input in separate method in case we need it

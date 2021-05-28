@@ -64,14 +64,21 @@ public class Action implements Cloneable{
         current.setTo(arrow, 3);
     }
 
-    public Board performReturn(Board current) throws Exception{
-        Board ret = (Board)current.clone();
-        int qColor = ret.get(queen);
-        ret.setTo(queen, 0);
-        ret.setTo(pos, qColor);
-        ret.setTo(arrow, 3);
+    public Board performReturn(Board current) {
+        try {
+            Board ret = (Board) current.clone();
+            int qColor = ret.get(queen);
+            ret.setTo(queen, 0);
+            ret.setTo(pos, qColor);
+            ret.setTo(arrow, 3);
 
-        return ret;
+            return ret;
+        }
+        catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+
+        return current;
     }
 
     //quick coordinate boundaries check

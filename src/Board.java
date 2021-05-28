@@ -13,12 +13,8 @@ public class Board implements Cloneable {
     public static final int N = 10;
 
     private int[][] board;
-    private ArrayList<int[]> white_queens;
-    private ArrayList<int[]> black_queens;
 
     public Board(){
-        white_queens = new ArrayList<>();
-        black_queens = new ArrayList<>();
         resetBoard();
 
         //initialize the board
@@ -28,7 +24,7 @@ public class Board implements Cloneable {
     public Board(int[][] source){
         resetBoard();
 
-        setState(source);
+        setBoard(source);
     }
 
 
@@ -83,7 +79,7 @@ public class Board implements Cloneable {
     }
 
     // set current board same as given array
-    public boolean setState(int[][] new_board){
+    public boolean setBoard(int[][] new_board){
         if(new_board==null)
             return false;
 
@@ -113,7 +109,19 @@ public class Board implements Cloneable {
             System.out.printf("%d%s", i, " | ");
             for (int j = 0; j < N; j++) {
                 //j corresponds to x, i corresponds to y
-                System.out.print(board[j][i] + " ");
+                switch(board[j][i]) {
+                    case 0:
+                        System.out.print(board[j][i] + " ");
+                        break;
+                    case 1:
+                        System.out.print("\033[32m" + board[j][i] + "\033[0m ");
+                        break;
+                    case 2:
+                        System.out.print("\033[34m" + board[j][i] + "\033[0m ");
+                        break;
+                    case 3:
+                        System.out.print("\033[31m" + board[j][i] + "\033[0m ");
+                }
             }
             System.out.println();
         }
@@ -141,7 +149,8 @@ public class Board implements Cloneable {
     //makes a deep copy of Board
     public Object clone() throws CloneNotSupportedException {
         Board b2 = (Board) super.clone();
-        b2.setState(this.board);
+        b2.resetBoard();
+        b2.setBoard(this.board);
 
         return b2;
     }

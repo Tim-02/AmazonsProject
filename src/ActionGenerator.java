@@ -1,9 +1,10 @@
 import java.util.ArrayList;
 
+//note: new instance needed for every generation
 public class ActionGenerator {
-    ArrayList<Action> actions;
-    ArrayList<int[]> queens;
-    TreeGen tree = new TreeGen();
+    public ArrayList<Action> actions;
+    public ArrayList<int[]> queens;
+
     //global variable for current queen and position to use in recursion
     private int[] current_queen = new int[2];
     private int[] current_pos = new int[2];
@@ -45,8 +46,7 @@ public class ActionGenerator {
                 }
             }
         }
-        //recurse for all the moves from this current move
-        tree.allMoves(current,player);
+
         return actions;
     }
 
