@@ -1,6 +1,9 @@
+import java.util.ArrayList;
+
 public class TreeGen {
     //for that access
     ActionGenerator aGen = new ActionGenerator();
+    ArrayList<Action> temp = new ArrayList();
 
     //for the nodes
     int value;
@@ -20,10 +23,23 @@ public class TreeGen {
 
     //need position of node, depth and what player)
     //using depth as a hard counter for now
-    public void allMoves(Board future, int player){
+    public void allMoves(Board future, int player, Node parent){
         //check for each child of the node by calling the function again
         if (future == null){
             new TreeGen(value);
+        }
+
+        //if(parent == null)
+          //TO DO, fix parent node situation, make them link up correctly
+
+        temp = aGen.generate(future, player);
+
+        for(Action act : temp){
+            try { Node n = new Node(act.performReturn(future));
+                parent.children.add(n);
+            }catch(Exception e){ System.out.println("Error in allMoves, cloning board");}
+
+
         }
 
 
