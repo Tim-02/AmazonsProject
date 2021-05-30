@@ -28,9 +28,13 @@ public class TreeGen {
     //called for root node
     public void generateTree(int player){
 
+        long startTime = System.nanoTime();
         temp = aGen.generate(root.curr, player);
+        long endTime = System.nanoTime();
 
+        System.out.println("Time spent generating actions: " + (float)(endTime-startTime)/1000000 + " ms");
 
+        startTime = System.nanoTime();
         for(Action act : temp){
             //create a child node by giving parent and action
             Node n = new Node(root, act);
@@ -39,13 +43,25 @@ public class TreeGen {
         }
 
         System.out.println("Possible moves: " + root.children.size());
+        endTime = System.nanoTime();
+        System.out.println("Time spent generating nodes: " + (float)(endTime-startTime)/1000000 + " ms");
 
+    }
+
+    public void generateTreeOptimized(int player){
+
+        long startTime = System.nanoTime();
+        NodesGenerator ng = new NodesGenerator(root);
+        root.children = ng.generate(player);
+        long endTime = System.nanoTime();
+
+        System.out.println("Possible moves: " + root.children.size());
+        System.out.println("Time spent generating nodes: " + (float)(endTime-startTime)/1000000 + " ms");
 
     }
 
     //todo:
     // - add the depth functionality to perform limited number of levels (only one right now)
-    // - optimize by generating nodes together with actions
 
     public void setRoot(Node new_root){
         if(new_root == null){

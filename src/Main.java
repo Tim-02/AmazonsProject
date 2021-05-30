@@ -19,7 +19,7 @@ class Main {
             System.out.println("PLAYER:" + player);
 
             //generate children nodes (only one depth)
-            tg.generateTree(player);
+            tg.generateTreeOptimized(player);
 
             //take random node from the children and perform its action
             Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
