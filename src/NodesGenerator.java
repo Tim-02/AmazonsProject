@@ -3,11 +3,14 @@ import java.util.ArrayList;
 // An optimized class that combines the Action generator and nodes creation
 public class NodesGenerator {
     public Node parent;
+    // added board as attribute just to access it easily
+    public Board current;
     public ArrayList<Node> nodes;
     public ArrayList<int[]> queens;
 
     public NodesGenerator(Node parent){
         this.parent = parent;
+        current = parent.getBoard();
     }
 
     //global variable for current queen and position to use in recursion
@@ -24,7 +27,7 @@ public class NodesGenerator {
         //scan board for queens
         for(int i = 0; i<Board.N; i++)
             for(int j = 0; j<Board.N; j++){
-                if(parent.curr.get(j, i) == player){
+                if(current.get(j, i) == player){
                     queens.add(new int[]{j, i});
                 }
             }
@@ -37,13 +40,13 @@ public class NodesGenerator {
             current_queen[1] = y;
 
             //debug
-            System.out.println("Current queen at: (" + current_queen[0] + ", " + current_queen[1] + ")");
+            //System.out.println("Current queen at: (" + current_queen[0] + ", " + current_queen[1] + ")");
 
             for (int i = y - 1; i <= y + 1; i++) {
                 for (int j = x - 1; j <= x + 1; j++) {
                     if (i == y && j == x)
                         continue;
-                    if (parent.curr.get(j, i) != 0)
+                    if (current.get(j, i) != 0)
                         continue;
                     else
                         //recurse in each direction
@@ -56,7 +59,7 @@ public class NodesGenerator {
     }
 
     public void checkDir(int startX, int startY, int endX, int endY){
-        if(parent.curr.get(endX, endY) == 0) {
+        if(current.get(endX, endY) == 0) {
             //find vector of movement
             int x_dir = endX - startX;
             int y_dir = endY - startY;
@@ -77,7 +80,7 @@ public class NodesGenerator {
             for (int j = x - 1; j <= x + 1; j++) {
                 if (i == y && j == x)
                     continue;
-                if (parent.curr.get(j, i) != 0)
+                if (current.get(j, i) != 0)
                     continue;
                 else
                     //recurse in each direction
@@ -88,7 +91,7 @@ public class NodesGenerator {
 
 
     public void checkArrowDir(int startX, int startY, int endX, int endY){
-        if(parent.curr.get(endX, endY) == 0) {
+        if(current.get(endX, endY) == 0) {
             //find vector of movement
             int x_dir = endX - startX;
             int y_dir = endY - startY;
@@ -100,6 +103,8 @@ public class NodesGenerator {
 
             //create the node
             Node n = new Node(parent, act);
+
+
 
             nodes.add(n);
 

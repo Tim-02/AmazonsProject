@@ -7,7 +7,6 @@ Coordinates are counted from right-up corner
 3 - block or arrow
 */
 
-import java.util.ArrayList;
 
 public class Board implements Cloneable {
     public static final int N = 10;
@@ -84,8 +83,7 @@ public class Board implements Cloneable {
             return false;
 
         for(int i=0; i<N; i++)
-            for(int j=0; j<N; j++)
-                board[i][j]=new_board[i][j];
+            System.arraycopy(new_board[i], 0, board[i], 0, N);
 
         return true;
     }

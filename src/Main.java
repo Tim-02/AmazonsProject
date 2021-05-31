@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+//at the moment we generate new tree at every turn
+//depth gradually increasing (manually for now)
+//todo:
+// - come up with a way to avoid generating from scratch
 class Main {
     public static void main(String[] args) {
         Random r = new Random();
@@ -15,11 +19,53 @@ class Main {
 
         b.printBetterBoard();
 
-        for(int i=0; i<50; i++) {
+
+        //first 20 moves ; depth =1
+        for(int i=0; i<25; i++) {
             System.out.println("PLAYER:" + player);
 
             //generate children nodes (only one depth)
-            tg.generateTreeOptimized(player);
+            tg.generateTreeOptimized(player, 1);
+
+            //take random node from the children and perform its action
+            Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
+            System.out.println("THEY PICKED: " + random_node.action);
+            random_node.action.perform(b);
+
+            //now chosen node is the new root node
+            tg.setRoot(random_node);
+
+
+            b.printBetterBoard();
+            player = player == 2 ? 1 : 2;
+        }
+
+        //next 20 moves; depth = 2
+        for(int i=0; i<20; i++) {
+            System.out.println("PLAYER:" + player);
+
+            //generate children nodes (only one depth)
+            tg.generateTreeOptimized(player, 2);
+
+            //take random node from the children and perform its action
+            Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
+            System.out.println("THEY PICKED: " + random_node.action);
+            random_node.action.perform(b);
+
+            //now chosen node is the new root node
+            tg.setRoot(random_node);
+
+
+            b.printBetterBoard();
+            player = player == 2 ? 1 : 2;
+        }
+
+        // 5 more moves; depth = 3
+        for(int i=0; i<5; i++) {
+            System.out.println("PLAYER:" + player);
+
+            //generate children nodes (only one depth)
+            tg.generateTreeOptimized(player, 3);
 
             //take random node from the children and perform its action
             Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
@@ -35,6 +81,10 @@ class Main {
         }
     }
 
+
+
+
+    
     //moved random AI to separate method
     public static void randomMove(Board b, int player){
         ActionGenerator ag = new ActionGenerator();

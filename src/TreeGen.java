@@ -1,14 +1,11 @@
 import java.util.ArrayList;
 
 public class TreeGen {
-    //for that access
-    ActionGenerator aGen = new ActionGenerator();
-    ArrayList<Action> temp = new ArrayList();
 
     //keep reference to the root
     Node root;
-    //hardcoded depth limit
-    public int depth = 3;
+    //total recursion count
+    static long size;
 
     //constructors
 
@@ -25,11 +22,13 @@ public class TreeGen {
 
     //methods
 
-    //called for root node
+    //uses older ActionGenerator
     public void generateTree(int player){
+        ActionGenerator aGen = new ActionGenerator();
+
 
         long startTime = System.nanoTime();
-        temp = aGen.generate(root.curr, player);
+        ArrayList<Action> temp = aGen.generate(root.getBoard(), player);
         long endTime = System.nanoTime();
 
         System.out.println("Time spent generating actions: " + (float)(endTime-startTime)/1000000 + " ms");
@@ -48,26 +47,54 @@ public class TreeGen {
 
     }
 
-    public void generateTreeOptimized(int player){
+    //
+    public void generateTreeOptimized(int player, int depth){
+        size = 1;
 
         long startTime = System.nanoTime();
         NodesGenerator ng = new NodesGenerator(root);
         root.children = ng.generate(player);
         long endTime = System.nanoTime();
 
+        size+=root.children.size();
+
+        if(depth > 1) {
+            for (Node n : root.children) {
+                //recursive call for tree generation
+                generateTreeOptimized(player == 2 ? 1 : 2, n, depth-1);
+            }
+
+        }
+
         System.out.println("Possible moves: " + root.children.size());
         System.out.println("Time spent generating nodes: " + (float)(endTime-startTime)/1000000 + " ms");
 
     }
 
-    //todo:
-    // - add the depth functionality to perform limited number of levels (only one right now)
+    //recursive call for deeper trees
+    public void generateTreeOptimized(int player, Node parent, int depth){
+        NodesGenerator ng = new NodesGenerator(parent);
+        parent.children = ng.generate(player);
+        size+=parent.children.size();
+
+        System.out.println("Total tree: " + size);
+
+        if(depth > 1) {
+            for (Node n : parent.children) {
+                //recursive call
+                generateTreeOptimized(player == 2 ? 1 : 2, n, depth - 1);
+                size++;
+            }
+        }
+    }
 
     public void setRoot(Node new_root){
         if(new_root == null){
             System.out.println("Root of the tree is set to null");
         }
         this.root = new_root;
+        this.root.curr = this.root.getBoard();
+        this.root.parent = null;
     }
 
 }

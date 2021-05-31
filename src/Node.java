@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class Node {
     Node parent;
-    Board curr;
+    Board curr; //new idea: keep board only for root node
     Action action; // action that led to this state
     ArrayList<Node> children;
 
@@ -19,10 +19,10 @@ public class Node {
     }
 
     // child node (only need a parent and action to calculate)
+    // note that we don't create board by default
     public Node(Node parent, Action action) {
         this.parent = parent;
         this.action = action;
-        curr = action.performReturn(parent.curr);
         children = new ArrayList<>();
     }
 
@@ -30,8 +30,16 @@ public class Node {
     public String toString() {
         return "Node{" +
                 "parent=" + parent +
-                ", curr=" + curr +
+                ", curr=" + getBoard() +
                 ", action=" + action +
                 '}';
+    }
+
+    //instead we make a board only when needed
+    public Board getBoard() {
+        if(parent == null)
+            return curr;
+        else
+            return action.performReturn(parent.getBoard());
     }
 }
