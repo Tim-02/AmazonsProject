@@ -48,11 +48,17 @@ public class NodesGenerator {
                         continue;
                     if (current.get(j, i) != 0)
                         continue;
-                    else
+                    else {
                         //recurse in each direction
                         checkDir(x, y, j, i);
+                    }
                 }
             }
+        }
+
+        if(nodes.size() == 0){ //if no children nodes found then no possible moves
+            System.out.println("Found a leaf node.");
+            parent.isLeaf = true;
         }
 
         return nodes;
@@ -80,18 +86,23 @@ public class NodesGenerator {
             for (int j = x - 1; j <= x + 1; j++) {
                 if (i == y && j == x)
                     continue;
-                if (current.get(j, i) != 0)
-                    continue;
-                else
+                else if (current.get(j, i) != 0) {
+                    if(current_queen[0] == j && current_queen[1] == i) //case when we shoot an arrow where wwe were
+                        checkArrowDir(x, y, j, i);
+                    else
+                        continue;
+                }
+                else {
                     //recurse in each direction
                     checkArrowDir(x, y, j, i);
+                }
             }
         }
     }
 
 
     public void checkArrowDir(int startX, int startY, int endX, int endY){
-        if(current.get(endX, endY) == 0) {
+        if(current.get(endX, endY) == 0 || (endX == current_queen[0] && endY == current_queen[1])) {
             //find vector of movement
             int x_dir = endX - startX;
             int y_dir = endY - startY;
@@ -103,8 +114,6 @@ public class NodesGenerator {
 
             //create the node
             Node n = new Node(parent, act);
-
-
 
             nodes.add(n);
 

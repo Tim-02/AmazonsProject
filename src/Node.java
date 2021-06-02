@@ -5,6 +5,7 @@ public class Node {
     Board curr; //new idea: keep board only for root node
     Action action; // action that led to this state
     ArrayList<Node> children;
+    boolean isLeaf; //only set when children are generated
 
     // todo: give value to each node
 
@@ -14,6 +15,8 @@ public class Node {
     public Node(){
         parent = null;
         action = null;
+        isLeaf = false;
+
         curr = new Board();
         children = new ArrayList<>();
     }
@@ -21,6 +24,8 @@ public class Node {
     // child node (only need a parent and action to calculate)
     // note that we don't create board by default
     public Node(Node parent, Action action) {
+        isLeaf = false;
+
         this.parent = parent;
         this.action = action;
         children = new ArrayList<>();
@@ -42,4 +47,5 @@ public class Node {
         else
             return action.performReturn(parent.getBoard());
     }
+
 }

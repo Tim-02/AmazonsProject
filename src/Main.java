@@ -9,9 +9,10 @@ import java.util.Scanner;
 class Main {
     public static void main(String[] args) {
         Random r = new Random();
-
         //create a tree gen with only a root node
         TreeGen tg = new TreeGen();
+        //node to perform moves
+        Node random_node = tg.root;
         //local version of the board
         Board b = new Board();
 
@@ -21,14 +22,17 @@ class Main {
 
 
         //first 20 moves ; depth =1
-        for(int i=0; i<25; i++) {
+        while(!random_node.isLeaf) {
             System.out.println("PLAYER:" + player);
 
             //generate children nodes (only one depth)
             tg.generateTreeOptimized(player, 1);
 
+            if(tg.root.isLeaf)
+                break; //end of game
+
             //take random node from the children and perform its action
-            Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
+            random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
             System.out.println("THEY PICKED: " + random_node.action);
             random_node.action.perform(b);
 
@@ -40,51 +44,14 @@ class Main {
             player = player == 2 ? 1 : 2;
         }
 
-        //next 20 moves; depth = 2
-        for(int i=0; i<20; i++) {
-            System.out.println("PLAYER:" + player);
+        System.out.println("\nGAME OVER: PLAYER " + (player == 2 ? 1 : 2) + " WON!");
 
-            //generate children nodes (only one depth)
-            tg.generateTreeOptimized(player, 2);
-
-            //take random node from the children and perform its action
-            Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
-            System.out.println("THEY PICKED: " + random_node.action);
-            random_node.action.perform(b);
-
-            //now chosen node is the new root node
-            tg.setRoot(random_node);
-
-
-            b.printBetterBoard();
-            player = player == 2 ? 1 : 2;
-        }
-
-        // 5 more moves; depth = 3
-        for(int i=0; i<5; i++) {
-            System.out.println("PLAYER:" + player);
-
-            //generate children nodes (only one depth)
-            tg.generateTreeOptimized(player, 3);
-
-            //take random node from the children and perform its action
-            Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
-            System.out.println("THEY PICKED: " + random_node.action);
-            random_node.action.perform(b);
-
-            //now chosen node is the new root node
-            tg.setRoot(random_node);
-
-
-            b.printBetterBoard();
-            player = player == 2 ? 1 : 2;
-        }
     }
 
 
 
 
-    
+
     //moved random AI to separate method
     public static void randomMove(Board b, int player){
         ActionGenerator ag = new ActionGenerator();
