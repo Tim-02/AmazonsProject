@@ -4,47 +4,42 @@ import java.util.Scanner;
 
 //at the moment we generate new tree at every turn
 //depth gradually increasing (manually for now)
-//todo:
-// - come up with a way to avoid generating from scratch
+
 class Main {
     public static void main(String[] args) {
-        Random r = new Random();
-        //create a tree gen with only a root node
-        TreeGen tg = new TreeGen();
-        //node to perform moves
-        Node random_node = tg.root;
-        //local version of the board
-        Board b = new Board();
-
         int player = 2; //black
+        Node root = new Node();
+
+
+        Board b = new Board();
 
         b.printBetterBoard();
 
 
-        //first 20 moves ; depth =1
-        while(!random_node.isLeaf) {
-            System.out.println("PLAYER:" + player);
 
-            //generate children nodes (only one depth)
-            tg.generateTreeOptimized(player, 1);
+        MonteCarloSearch mcs = new MonteCarloSearch(root, player);
+        System.out.println("PLAYER " + player + ": ");
 
-            if(tg.root.isLeaf)
-                break; //end of game
+        //calculate the best move
+        Node current = mcs.move();
+        System.out.println("PICKED ACTION: " + current.action);
+        current.action.perform(b);
 
-            //take random node from the children and perform its action
-            random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
-            System.out.println("THEY PICKED: " + random_node.action);
-            random_node.action.perform(b);
+        System.out.println("VISITS TO NODE: " + current.visits + "; VALUE: " + current.value + "; UCT: " + current.getUCT());
 
-            //now chosen node is the new root node
-            tg.setRoot(random_node);
+        root = current;
+        root.curr = root.getBoard();
+        root.parent = null;
 
 
-            b.printBetterBoard();
-            player = player == 2 ? 1 : 2;
-        }
+        b.printBetterBoard();
 
-        System.out.println("\nGAME OVER: PLAYER " + (player == 2 ? 1 : 2) + " WON!");
+
+
+
+
+
+
 
     }
 
