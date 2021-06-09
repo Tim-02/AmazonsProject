@@ -28,7 +28,7 @@ public class Node {
         curr = new Board();
         children = new ArrayList<>();
 
-        player = 2; // black start (NOT CORRECT)
+        player = 2; // not sure if correct?
         visits = 0;
         value = 0;
     }
@@ -49,11 +49,25 @@ public class Node {
 
     @Override
     public String toString() {
-        return "Node{" +
-                //"parent=" + parent +
-                ", curr=" + getBoard() +
-                ", action=" + action +
-                '}';
+        if(parent==null)
+            return "Node{" +
+                    " isRoot=true" +
+                    ", isLeaf=" + isLeaf +
+                    ", player=" + player +
+                    ", value=" + value +
+                    ", visits=" + visits +
+                    ", UCT=" + getUCT() +
+                    "}";
+        else
+            return "Node{" +
+                    " isRoot=false" +
+                    ", action=" + action +
+                    ", isLeaf=" + isLeaf +
+                    ", player=" + player +
+                    ", value=" + value +
+                    ", visits=" + visits +
+                    ", UCT=" + getUCT() +
+                    "}";
     }
 
     //instead we make a board only when needed
@@ -74,6 +88,14 @@ public class Node {
             return exploit + explore;
         }
 
+    }
+
+    public double getProbability(){
+
+        if(this.visits == 0) // if no visits made here, we assume random chance
+            return 0.5;
+        else
+            return (double) this.value / (double) this.visits;
     }
 
     public void addVisits(){
