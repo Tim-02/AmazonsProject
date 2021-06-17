@@ -11,6 +11,8 @@ class Main {
         Node root = new Node(); // updated every turn
         MonteCarloSearch mcs = new MonteCarloSearch(root, player);
 
+        int moveCounter = 0;
+
 
         Node current; // to keep track of current node
         Board b = new Board();
@@ -24,16 +26,18 @@ class Main {
                 mcs.setRoot(root);
 
                 System.out.println("PLAYER " + player + ": ");
+                double start = System.currentTimeMillis()/1000.0;
 
 
                 //calculate the best move
-                current = mcs.move();
+                current = mcs.move(start);
                 System.out.println("PICKED ACTION: " + current.action);
                 current.action.perform(b);
 
                 b.printBetterBoard();
 
-                System.out.println("VISITS TO NODE: " + current.visits + "; VALUE: " + current.value + "; PROBABILITY: " + current.getProbability());
+                System.out.println("VISITS TO NODE: " + current.visits + "; VALUE: " + current.value
+                        + "; PROB: " + current.getProbability() + "; UCT: " + current.getUCT());
 
 
                 // resetting the root manually for opponent
@@ -41,6 +45,7 @@ class Main {
                 root.curr = root.getBoard();
                 root.parent = null;
 
+                moveCounter++;
             }
             else if(player == 1) {
                 System.out.println("PLAYER:" + player);
@@ -61,6 +66,8 @@ class Main {
                 root = random_node;
                 root.curr = root.getBoard();
                 root.parent = null;
+
+                moveCounter++;
             }
 
 
@@ -69,6 +76,7 @@ class Main {
 
 
         System.out.println("GAME OVER: PLAYER " + (3-player) + " WON!");
+        System.out.println("TOTAL MOVES: " + moveCounter);
 
 
 

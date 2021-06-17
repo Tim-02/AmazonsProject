@@ -1,13 +1,3 @@
-/*
-Primary board class that contains board matrix 10x10
-Coordinates are counted from right-up corner
-0 - empty cell
-1 - white queen
-2 - black queen
-3 - block or arrow
-*/
-
-
 public class Board implements Cloneable {
     public static final int N = 10;
 
@@ -29,15 +19,15 @@ public class Board implements Cloneable {
 
     public void init(){
         //black queens
-        setTo(3, 0, 2);
-        setTo(6, 0, 2);
-        setTo(0, 3, 2);
-        setTo(9, 3, 2);
+        setTo(3, 0, 1);
+        setTo(6, 0, 1);
+        setTo(0, 3, 1);
+        setTo(9, 3, 1);
         //white queens
-        setTo(0, 6, 1);
-        setTo(9, 6, 1);
-        setTo(3, 9, 1);
-        setTo(6, 9, 1);
+        setTo(0, 6, 2);
+        setTo(9, 6, 2);
+        setTo(3, 9, 2);
+        setTo(6, 9, 2);
     }
 
     // get cell value at (x, y)
@@ -103,7 +93,7 @@ public class Board implements Cloneable {
         System.out.println("  | 0 1 2 3 4 5 6 7 8 9");
         System.out.println("--+---------------------");
 
-        for(int i=0; i<N; i++) {
+        for(int i=N-1; i>=0; i--) {
             System.out.printf("%d%s", i, " | ");
             for (int j = 0; j < N; j++) {
                 //j corresponds to x, i corresponds to y

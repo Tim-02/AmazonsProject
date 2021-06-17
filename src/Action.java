@@ -17,6 +17,18 @@ public class Action implements Cloneable{
         arrow = new int[2];
     }
 
+    public Action(int[] queen, int[] pos, int[] arrow){
+        if( !( isOutOfBounds(queen[0], queen[1])
+                || isOutOfBounds(pos[0], pos[1])
+                || isOutOfBounds(arrow[0], arrow[1]))) {
+
+            this.queen = queen;
+            this.pos = pos;
+            this.arrow = arrow;
+
+        }
+    }
+
     public Action(int queenX, int queenY, int posX, int posY, int arrowX, int arrowY){
         queen = new int[2];
         pos = new int[2];
@@ -83,7 +95,7 @@ public class Action implements Cloneable{
 
     //quick coordinate boundaries check
     public boolean isOutOfBounds(int x, int y){
-        if(x<0 || x>=Board.N || y<0 || y>=Board.N) {
+        if(x<0 || x>= Board.N || y<0 || y>= Board.N) {
             System.out.println("Coordinates out of bounds");
             return true;
         }
@@ -118,5 +130,13 @@ public class Action implements Cloneable{
                 ", pos=" + Arrays.toString(pos) +
                 ", arrow=" + Arrays.toString(arrow) +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object act) {
+        if (this == act) return true;
+        if (act == null || getClass() != act.getClass()) return false;
+        Action action = (Action) act;
+        return Arrays.equals(queen, action.queen) && Arrays.equals(pos, action.pos) && Arrays.equals(arrow, action.arrow);
     }
 }

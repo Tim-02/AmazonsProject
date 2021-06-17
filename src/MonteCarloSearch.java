@@ -1,12 +1,14 @@
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
 public class MonteCarloSearch {
+    final double timeLimit = 15;
+
     /* attributes */
     Node root; // assuming root always represents opponent's move
     NodesGenerator ng;
+    int count;
     int player; // player is not supposed to change, we assign it at the beginning
 
     /* constructors */
@@ -26,33 +28,35 @@ public class MonteCarloSearch {
     /* METHODS */
 
     // makes the final decision
-    public Node move(){
+    public Node move(double time){
+        count = 0;
         Node current;
 
         System.out.println("**STARTING MCTS**");
-
         //hardcoded 1000 iterations
-        for(int i=0; i<3000; i++) {
+        do {
+            count++;
             //Board b = new Board();
             //System.out.println("Iteration = " + i);
 
             current = select(root);
             //System.out.println("\nSELECTED: " + current);
 
-            current = expand(current);
-            //System.out.println("\nNODE EXPANDED TO : " + current);
+            if (current.visits != 0) {
+
+                current = expand(current);
+
+            }
 
             simulate(current);
-            //System.out.println("\nSIMULATED: " + current.value + "/" + current.visits);
 
-            //System.out.println("\nBACKPROPAGATE TO THE ROOT");
             propagate(current);
 
 
-            //current.action.perform(b);
-            //b.printBetterBoard();
-        }
+        } while(((System.currentTimeMillis()/1000.0) - time) < timeLimit);
 
+        System.out.println("TIME TAKEN: " + ((System.currentTimeMillis()/1000.0) - time));
+        System.out.println("Iterations done: " + count);
 
         return maxProb(root);
     }
@@ -61,11 +65,8 @@ public class MonteCarloSearch {
     public Node select(Node parent){
         Node current = parent;
 
-        //while current has children, we select one of it's children building a path
+        //while current has children, we select one of it's children with max UCT or randomly
         while(current.hasChildren()){
-            // really crude way of making sure that all nodes in the level were checked before moving onto next level
-            if (current.visits < current.children.size())
-                return current;
             current = maxUCT(current);
         }
 
@@ -76,20 +77,21 @@ public class MonteCarloSearch {
     // utility method for selection to find node with biggest uct
     public Node maxUCT(Node parent){
         Node child;
-        Random r = new Random();
 
         //System.out.println("SELECTING FROM CHILDREN OF " + parent);
 
+
         if(parent != null && parent.children.size() != 0) {
+            //shuffle to make random first
+            Collections.shuffle(parent.children);
+
             child = Collections.max(parent.children, (n1, n2) -> {
                 if (n1.getUCT() > n2.getUCT())
                     return 1;
                 else if (n1.getUCT() < n2.getUCT())
                     return -1;
-                else if(r.nextBoolean()) //todo: possible to add evaluation here
-                    return 1;
-                else
-                    return -1;
+                else //randomness didn't actually work before, so i just shuffle the list
+                    return 0;
             });
             //System.out.println("MAX UCT: " + child.getUCT());
             //System.out.println("NODE WITH MAX UCT: " + child);
@@ -102,20 +104,26 @@ public class MonteCarloSearch {
 
     public Node maxProb(Node parent){
         Node child;
-        Random r = new Random();
 
         //System.out.println("SELECTING FROM CHILDREN OF " + parent);
 
         if(parent != null && parent.children.size() != 0) {
+            //shuffle to make random first
+            Collections.shuffle(parent.children);
+
             child = Collections.max(parent.children, (n1, n2) -> {
                 if ( n1.getProbability() > n2.getProbability())
                     return 1;
                 else if (n1.getProbability() < n2.getProbability())
                     return -1;
-                else if(r.nextBoolean())
-                    return 1;
-                else
-                    return -1;
+                else {
+                    if(n1.value > n2.value)
+                        return 1;
+                    else if(n1.value < n2.value)
+                        return -1;
+                    else
+                        return 0;
+                }
             });
             //System.out.println("MAX PROBABILITY: " + (double) child.value / (double)child.visits);
             //System.out.println("NODE WITH MAX PROB: " + child);
@@ -128,6 +136,7 @@ public class MonteCarloSearch {
 
 
     // expand unexplored node if possible (i.e. generate nodes)
+    // in move() we assume node was already simulated at least once
     public Node expand(Node current) {
         ng = new NodesGenerator(current);
 
@@ -137,18 +146,11 @@ public class MonteCarloSearch {
         }
 
         if(!current.isLeaf) {
-            Random r = new Random();
-            Node random = current.children.get(r.nextInt(current.children.size()));
-
-            while (random.visits != 0) {
-                random = current.children.get(r.nextInt(current.children.size()));
-            }
-
-            return random;
+            // this is just to pick a random node
+            current = maxUCT(current);
         }
 
-        else
-            return current;
+        return current;
     }
 
 
@@ -156,8 +158,9 @@ public class MonteCarloSearch {
     public void simulate(Node current){
         Random r = new Random();
 
-        // make copy of given node
+        // make copy of given node (shallow)
         Node temp = current;
+
 
         //simulate the game with random moves, until leaf node found
         while(!temp.isLeaf){
@@ -171,23 +174,29 @@ public class MonteCarloSearch {
                 temp = possibleMoves.get(r.nextInt(possibleMoves.size()));
         }
 
-        //if the leaf node belong to opponent player, this is win
+
+        //if the leaf node belong to opponent player (their turn), this is win
         if(temp.player != player)
             current.addValue(1);
-        else
-            current.addValue(-1);
 
         current.addVisits();
+
+
     }
 
     // backpropagating the visits and values to the root
     public Node propagate(Node current){
-        int value = current.value;
+        int val;
+
+        if(!current.isLeaf)
+            val = current.value;
+        else
+            val = current.player != player ? 1 : 0;
 
         while(current.parent != null){
             current = current.parent;
 
-            current.addValue(value);
+            current.addValue(val);
             current.addVisits();
         }
 
@@ -201,6 +210,7 @@ public class MonteCarloSearch {
         root.curr = root.getBoard();
         root.parent = null;
         root.value = 0;
+        root.visits = 0;
 
         return root;
     }

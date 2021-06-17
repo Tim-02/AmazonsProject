@@ -81,10 +81,10 @@ public class Node {
     public double getUCT(){
 
         if(this.visits == 0)
-            return Integer.MAX_VALUE;
+            return Double.POSITIVE_INFINITY;
         else {
             double exploit = (double) this.value / (double) this.visits;
-            double explore = Math.sqrt( 2 * Math.log(parent.visits) / this.visits);
+            double explore = Math.sqrt( 2 * Math.log(parent.visits) / (double) this.visits);
             return exploit + explore;
         }
 
