@@ -4,47 +4,83 @@ import java.util.Scanner;
 
 //at the moment we generate new tree at every turn
 //depth gradually increasing (manually for now)
-//todo:
-// - come up with a way to avoid generating from scratch
+
 class Main {
     public static void main(String[] args) {
-        Random r = new Random();
-        //create a tree gen with only a root node
-        TreeGen tg = new TreeGen();
-        //node to perform moves
-        Node random_node = tg.root;
-        //local version of the board
-        Board b = new Board();
-
         int player = 2; //black
+        Node root = new Node(); // updated every turn
+        MonteCarloSearch mcs = new MonteCarloSearch(root, player);
+
+        int moveCounter = 0;
+
+
+        Node current; // to keep track of current node
+        Board b = new Board();
 
         b.printBetterBoard();
 
 
-        //first 20 moves ; depth =1
-        while(!random_node.isLeaf) {
-            System.out.println("PLAYER:" + player);
+        while(!root.isLeaf) {
+            if(player == 2) {
+                //update mcs root
+                mcs.setRoot(root);
 
-            //generate children nodes (only one depth)
-            tg.generateTreeOptimized(player, 1);
-
-            if(tg.root.isLeaf)
-                break; //end of game
-
-            //take random node from the children and perform its action
-            random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
-            System.out.println("THEY PICKED: " + random_node.action);
-            random_node.action.perform(b);
-
-            //now chosen node is the new root node
-            tg.setRoot(random_node);
+                System.out.println("PLAYER " + player + ": ");
+                double start = System.currentTimeMillis()/1000.0;
 
 
-            b.printBetterBoard();
-            player = player == 2 ? 1 : 2;
+                //calculate the best move
+                current = mcs.move(start);
+                System.out.println("PICKED ACTION: " + current.action);
+                current.action.perform(b);
+
+                b.printBetterBoard();
+
+                System.out.println("VISITS TO NODE: " + current.visits + "; VALUE: " + current.value
+                        + "; PROB: " + current.getProbability() + "; UCT: " + current.getUCT());
+
+
+                // resetting the root manually for opponent
+                root = current;
+                root.curr = root.getBoard();
+                root.parent = null;
+
+                moveCounter++;
+            }
+            else if(player == 1) {
+                System.out.println("PLAYER:" + player);
+                TreeGen tg = new TreeGen(root);
+                Random r = new Random();
+
+                //generate children nodes (only one depth)
+                tg.generateTreeOptimized(player, 1);
+
+                //take random node from the children and perform its action
+                Node random_node = tg.root.children.get(r.nextInt(tg.root.children.size()));
+                System.out.println("THEY PICKED: " + random_node.action);
+                random_node.action.perform(b);
+
+
+                b.printBetterBoard();
+
+                root = random_node;
+                root.curr = root.getBoard();
+                root.parent = null;
+
+                moveCounter++;
+            }
+
+
+            player = player==2 ? 1 : 2;
         }
 
-        System.out.println("\nGAME OVER: PLAYER " + (player == 2 ? 1 : 2) + " WON!");
+
+        System.out.println("GAME OVER: PLAYER " + (3-player) + " WON!");
+        System.out.println("TOTAL MOVES: " + moveCounter);
+
+
+
+
 
     }
 

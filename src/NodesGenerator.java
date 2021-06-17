@@ -25,8 +25,8 @@ public class NodesGenerator {
 
 
         //scan board for queens
-        for(int i = 0; i<Board.N; i++)
-            for(int j = 0; j<Board.N; j++){
+        for(int i = 0; i< Board.N; i++)
+            for(int j = 0; j< Board.N; j++){
                 if(current.get(j, i) == player){
                     queens.add(new int[]{j, i});
                 }
@@ -57,7 +57,7 @@ public class NodesGenerator {
         }
 
         if(nodes.size() == 0){ //if no children nodes found then no possible moves
-            System.out.println("Found a leaf node.");
+            //System.out.println("Found a leaf node.");
             parent.isLeaf = true;
         }
 
